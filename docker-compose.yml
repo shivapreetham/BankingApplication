@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: banking-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: banking_db
+      MYSQL_USER: banking_user
+      MYSQL_PASSWORD: banking_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./resources/database_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  banking-app:
+    build: .
+    container_name: banking-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking_db
+      SPRING_DATASOURCE_USERNAME: banking_user
+      SPRING_DATASOURCE_PASSWORD: banking_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      APP_JWT_SECRET: your-secret-key-change-this-in-production-min-32-chars
+      APP_JWT_EXPIRATION: 86400000
+      SERVER_PORT: 8080
+      JAVA_OPTS: -Xmx512m -Xms256m
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - banking-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/auth/validate/test"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  banking-network:
+    driver: bridge

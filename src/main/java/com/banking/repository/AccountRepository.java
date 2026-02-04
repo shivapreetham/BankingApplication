@@ -1,0 +1,23 @@
+package com.banking.repository;
+
+import com.banking.model.Account;
+import com.banking.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * JPA Repository for Account entity
+ */
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Integer> {
+
+    Optional<Account> findByAccountNumber(String accountNumber);
+
+    List<Account> findByUserAndStatus(User user, String status);
+
+    List<Account> findByUser(User user);
+
+    boolean existsByAccountNumber(String accountNumber);
+}
