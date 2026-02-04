@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Account Response DTO for API responses
@@ -29,8 +29,8 @@ public class AccountResponse {
     private String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdDate;
+    private Date createdDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime lastModifiedDate;
+    private Date lastModifiedDate;
 }

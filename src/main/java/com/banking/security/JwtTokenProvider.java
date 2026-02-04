@@ -47,11 +47,11 @@ public class JwtTokenProvider {
         try {
             SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
-            String subject = Jwts.parserBuilder()
-                    .setSigningKey(key)
+            String subject = Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
+                    .parseSignedClaims(token)
+                    .getPayload()
                     .getSubject();
 
             return Integer.parseInt(subject);
@@ -67,11 +67,11 @@ public class JwtTokenProvider {
         try {
             SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
-            return (String) Jwts.parserBuilder()
-                    .setSigningKey(key)
+            return (String) Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
+                    .parseSignedClaims(token)
+                    .getPayload()
                     .get("username");
         } catch (Exception ex) {
             throw new RuntimeException("Invalid JWT token: " + ex.getMessage());
@@ -84,10 +84,10 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
+            Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception ex) {
             return false;

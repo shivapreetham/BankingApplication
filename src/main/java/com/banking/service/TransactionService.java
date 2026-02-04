@@ -226,7 +226,7 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
         Pageable pageable = PageRequest.of(0, 50);
-        return transactionRepository.findByAccountOrderByTimestampDesc(account, pageable);
+        return transactionRepository.findRecentTransactions(account, pageable);
     }
 
     /**

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Transaction Response DTO
@@ -25,5 +25,5 @@ public class TransactionResponse {
     private BigDecimal balanceAfter;
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
+    private Date timestamp;
 }

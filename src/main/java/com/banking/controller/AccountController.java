@@ -137,7 +137,7 @@ public class AccountController {
                 .balance(account.getBalance())
                 .status(account.getStatus())
                 .createdDate(account.getCreatedDate())
-                .lastModifiedDate(account.getLastModifiedDate())
+                .lastModifiedDate(account.getUpdatedDate())
                 .build();
     }
 }
