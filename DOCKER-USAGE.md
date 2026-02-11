@@ -7,6 +7,17 @@ This banking system supports **dual-mode operation**: REST API and CLI modes. Bo
 - Docker installed
 - Docker Compose installed
 
+## Database Configuration
+
+The system uses a **persistent Docker MySQL database**:
+- **Port**: 3307 (to avoid conflict with local MySQL on 3306)
+- **Database**: banking_db
+- **Username**: pfLab
+- **Password**: pfLab@2026
+- **Volume**: mysql_data (persistent storage)
+
+All data is stored in the Docker volume `mysql_data` and persists across container restarts.
+
 ## Running the Application
 
 ### Option 1: REST API Mode (Default)
@@ -85,9 +96,17 @@ docker-compose logs mysql
 ```
 
 ### Connect to MySQL Directly
+
+From inside Docker container:
 ```bash
-docker exec -it banking-mysql mysql -u banking_user -p
-# Password: banking_password
+docker exec -it banking-mysql mysql -u pfLab -p
+# Password: pfLab@2026
+```
+
+From host machine:
+```bash
+mysql -h localhost -P 3307 -u pfLab -p
+# Password: pfLab@2026
 ```
 
 ### Reset Database
@@ -107,10 +126,10 @@ docker-compose ps
 Wait for MySQL health check to pass, then try again.
 
 ### Port Conflicts
-If port 8080 or 3306 is already in use:
+If port 8080 or 3307 is already in use:
 - Edit `docker-compose.yml` ports section
 - Change `"8080:8080"` to `"8081:8080"` (or any free port)
-- Change `"3306:3306"` to `"3307:3306"` (or any free port)
+- MySQL is already configured to use port 3307 to avoid conflicts with local MySQL on 3306
 
 ### Viewing Logs
 ```bash
@@ -146,12 +165,20 @@ docker-compose logs -f mysql
 
 Both modes connect to the same MySQL database for data persistence.
 
+## Additional Resources
+
+- [MYSQL-USER-GUIDE.md](MYSQL-USER-GUIDE.md) - Complete guide on MySQL user management
+- How to create new MySQL users
+- How to change username/password
+- Security best practices
+
 ## Production Notes
 
 Before deploying to production:
 1. Change `APP_JWT_SECRET` to a secure random value (min 32 chars)
-2. Change MySQL passwords in `docker-compose.yml`
+2. Change MySQL passwords (`pfLab@2026` and `pfLabRoot@2026`) to strong passwords
 3. Enable HTTPS/SSL
 4. Restrict CORS origins
 5. Set up database backups
 6. Configure monitoring and logging
+7. Consider using Docker secrets instead of environment variables for passwords

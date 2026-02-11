@@ -5,17 +5,17 @@ services:
     image: mysql:8.0
     container_name: banking-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: pfLabRoot@2026
       MYSQL_DATABASE: banking_db
-      MYSQL_USER: banking_user
-      MYSQL_PASSWORD: banking_password
+      MYSQL_USER: pfLab
+      MYSQL_PASSWORD: pfLab@2026
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./resources/database_schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./setup-docker-mysql.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-upfLab", "-ppfLab@2026"]
       timeout: 20s
       retries: 10
       interval: 10s
@@ -28,8 +28,8 @@ services:
     container_name: banking-app
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking_db
-      SPRING_DATASOURCE_USERNAME: banking_user
-      SPRING_DATASOURCE_PASSWORD: banking_password
+      SPRING_DATASOURCE_USERNAME: pfLab
+      SPRING_DATASOURCE_PASSWORD: pfLab@2026
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       APP_JWT_SECRET: your-secret-key-change-this-in-production-min-32-chars
       APP_JWT_EXPIRATION: 86400000
@@ -56,8 +56,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: cli
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking_db
-      SPRING_DATASOURCE_USERNAME: banking_user
-      SPRING_DATASOURCE_PASSWORD: banking_password
+      SPRING_DATASOURCE_USERNAME: pfLab
+      SPRING_DATASOURCE_PASSWORD: pfLab@2026
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       APP_JWT_SECRET: your-secret-key-change-this-in-production-min-32-chars
       APP_JWT_EXPIRATION: 86400000
