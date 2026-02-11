@@ -50,6 +50,28 @@ services:
       retries: 3
       start_period: 40s
 
+  banking-cli:
+    build: .
+    container_name: banking-cli
+    environment:
+      SPRING_PROFILES_ACTIVE: cli
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking_db
+      SPRING_DATASOURCE_USERNAME: banking_user
+      SPRING_DATASOURCE_PASSWORD: banking_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      APP_JWT_SECRET: your-secret-key-change-this-in-production-min-32-chars
+      APP_JWT_EXPIRATION: 86400000
+      JAVA_OPTS: -Xmx512m -Xms256m
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - banking-network
+    stdin_open: true
+    tty: true
+    profiles:
+      - cli
+
 volumes:
   mysql_data:
     driver: local
